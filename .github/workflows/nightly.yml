@@ -32,6 +32,10 @@ jobs:
         with:
           go-version: 1.19
           cache: true
+      - uses: actions/cache@v3
+        with:
+          path: dist/${{ matrix.GOOS }}
+          key: ${{ matrix.GOOS }}-${{ github.ref }}
       - run: goreleaser release --split --nigthly --rm-dist
         env:
           GOOS: ${{ matrix.GOOS }}
@@ -58,7 +62,19 @@ jobs:
         with:
           go-version: 1.19
           cache: true
-      - run: goreleaser release --split --nigthly --rm-dist
+      - uses: actions/cache@v3
+        with:
+          path: dist/linux
+          key: linux-${{ github.ref }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/darwin
+          key: darwin-${{ github.ref }}
+      - uses: actions/cache@v3
+        with:
+          path: dist/windows
+          key: windows-${{ github.ref }}
+      - run: goreleaser publish --merge
         env:
           GOOS: ${{ matrix.GOOS }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
