@@ -27,6 +27,13 @@ nfpms:
     section: utils
     formats: [apk, deb, rpm]
 
+release:
+  name_template: 'v{{ .Version }}'
+  footer: |
+
+    This is an example release using [GoReleaser Pro](https://goreleaser.com/pro).
+    Check it out!
+
 
 nightly:
   publish_release: true
