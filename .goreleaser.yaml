@@ -1,0 +1,78 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - targets: [go_first_class]
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+nfpms:
+  - file_name_template: '{{ .ConventionalFileName }}'
+    homepage:  https://goreleaser.com
+    description: Just an example
+    maintainer: Carlos Alexandro Becker <carlos@becker.software>
+    license: MIT
+    vendor: GoReleaser
+    bindir: /usr/bin
+    section: utils
+    formats: [apk, deb, rpm]
+
+
+nightly:
+  publish_release: true
+  keep_single_release: true
+  name_template: '{{ incminor .Version }}-nightly'
+  tag_name: nightly
+
+
+dockers:
+- image_templates:
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-amd64'
+  - '{{ if not .IsNightly }}ghcr.io/caarlos0/goreleaser-pro-split-merge-example:latest{{ end }}-amd64'
+  build_flag_templates:
+  - "--pull"
+  - "--label=org.opencontainers.image.description=Just an example"
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.name={{.ProjectName}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--label=org.opencontainers.image.source={{.GitURL}}"
+  - "--platform=linux/amd64"
+  use: buildx
+- image_templates:
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-arm64'
+  - '{{ if not .IsNightly }}ghcr.io/caarlos0/goreleaser-pro-split-merge-example:latest{{ end }}-arm64'
+  build_flag_templates:
+  - "--pull"
+  - "--label=org.opencontainers.image.description=Just an example"
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.name={{.ProjectName}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--label=org.opencontainers.image.source={{.GitURL}}"
+  - "--platform=linux/arm64"
+  use: buildx
+
+docker_manifests:
+- name_template: 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}'
+  image_templates:
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-amd64'
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-arm64'
+- name_template: '{{ if not .IsNightly }}ghcr.io/caarlos0/goreleaser-pro-split-merge-example:latest{{ end }}'
+  image_templates:
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-amd64'
+  - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-arm64'
+
+# modelines, feel free to remove those if you don't want/use them:
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
