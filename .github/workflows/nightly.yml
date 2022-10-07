@@ -36,7 +36,7 @@ jobs:
         with:
           path: dist/${{ matrix.GOOS }}
           key: ${{ matrix.GOOS }}-${{ github.ref }}
-      - run: goreleaser release --split --nigthly --rm-dist
+      - run: ./goreleaser release --split --nigthly --rm-dist
         env:
           GOOS: ${{ matrix.GOOS }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
@@ -74,7 +74,7 @@ jobs:
         with:
           path: dist/windows
           key: windows-${{ github.ref }}
-      - run: goreleaser publish --merge
+      - run: ./goreleaser publish --merge
         env:
           GOOS: ${{ matrix.GOOS }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
