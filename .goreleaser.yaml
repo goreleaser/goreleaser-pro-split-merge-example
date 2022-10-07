@@ -38,7 +38,6 @@ nightly:
 dockers:
 - image_templates:
   - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-amd64'
-  - '{{ if not .IsNightly }}ghcr.io/caarlos0/goreleaser-pro-split-merge-example:latest{{ end }}-amd64'
   build_flag_templates:
   - "--pull"
   - "--label=org.opencontainers.image.description=Just an example"
@@ -51,7 +50,6 @@ dockers:
   use: buildx
 - image_templates:
   - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-arm64'
-  - '{{ if not .IsNightly }}ghcr.io/caarlos0/goreleaser-pro-split-merge-example:latest{{ end }}-arm64'
   build_flag_templates:
   - "--pull"
   - "--label=org.opencontainers.image.description=Just an example"
