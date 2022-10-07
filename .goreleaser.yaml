@@ -79,7 +79,7 @@ docker_manifests:
   - 'ghcr.io/caarlos0/goreleaser-pro-split-merge-example:v{{ .Version }}-arm64'
 
 monorepo:
-  tag_prefix: v
+  tag_prefix: v # so it always filters out the nightly tag
 
 # modelines, feel free to remove those if you don't want/use them:
 # yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
