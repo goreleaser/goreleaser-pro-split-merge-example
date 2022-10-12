@@ -41,8 +41,12 @@ jobs:
         with:
           path: dist/${{ matrix.GOOS }}
           key: ${{ matrix.GOOS }}-${{ steps.vars.outputs.sha_short }}
-      - run: ./goreleaser release --rm-dist --split --nightly
+      - uses: goreleaser/goreleaser-action@v2
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
+        with:
+          distribution: goreleaser-pro
+          version: nightly
+          args: releaser --rm-dist --split --nightly
         env:
           GOOS: ${{ matrix.GOOS }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
@@ -91,7 +95,11 @@ jobs:
 
 
       # release
-      - run: ./goreleaser continue --merge
+      - uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser-pro
+          version: nightly
+          args: continue --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
