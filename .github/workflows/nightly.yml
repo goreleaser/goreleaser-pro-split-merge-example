@@ -89,9 +89,9 @@ jobs:
           path: dist/windows
           key: windows-${{ steps.vars.outputs.sha_short }}
 
-      - run: ./goreleaser publish --merge
+
+      # release
+      - run: ./goreleaser continue --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
-      # TODO: announce too
-
