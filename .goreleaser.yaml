@@ -4,7 +4,15 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - targets: [go_first_class]
+- targets: [go_first_class]
+  mod_timestamp: '{{ .CommitTimestamp }}'
+  flags:
+    # trims path
+    - -trimpath
+  ldflags:
+    # use commit date instead of current date as main.date
+    # only needed if you actually use those things in your main package, otherwise can be ignored.
+    - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -17,15 +25,15 @@ changelog:
       - '^test:'
 
 nfpms:
-  - file_name_template: '{{ .ConventionalFileName }}'
-    homepage:  https://goreleaser.com
-    description: Just an example
-    maintainer: Carlos Alexandro Becker <carlos@becker.software>
-    license: MIT
-    vendor: GoReleaser
-    bindir: /usr/bin
-    section: utils
-    formats: [apk, deb, rpm]
+- file_name_template: '{{ .ConventionalFileName }}'
+  homepage:  https://goreleaser.com
+  description: Just an example
+  maintainer: Carlos Alexandro Becker <carlos@becker.software>
+  license: MIT
+  vendor: GoReleaser
+  bindir: /usr/bin
+  section: utils
+  formats: [apk, deb, rpm]
 
 release:
   name_template: 'v{{ .Version }}'
@@ -80,6 +88,48 @@ docker_manifests:
 
 monorepo:
   tag_prefix: v # so it always filters out the nightly tag
+
+
+# signs the checksum file
+# all files (including the sboms) are included in the checksum, so we don't need to sign each one if we don't want to
+# https://goreleaser.com/customization/sign
+signs:
+- cmd: cosign
+  env:
+  - COSIGN_EXPERIMENTAL=1
+  certificate: '${artifact}.pem'
+  args:
+    - sign-blob
+    - '--output-certificate=${certificate}'
+    - '--output-signature=${signature}'
+    - '${artifact}'
+  artifacts: checksum
+  output: true
+
+# create a source tarball
+# https://goreleaser.com/customization/source/
+source:
+  enabled: true
+
+# creates SBOMs of all archives and the source tarball using syft
+# https://goreleaser.com/customization/sbom
+sboms:
+- artifacts: archive
+- id: source # Two different sbom configurations need two different IDs
+  artifacts: source
+
+# signs our docker image
+# https://goreleaser.com/customization/docker_sign
+docker_signs:
+- cmd: cosign
+  env:
+  - COSIGN_EXPERIMENTAL=1
+  artifacts: images
+  output: true
+  args:
+  - 'sign'
+  - '${artifact}'
+
 
 # modelines, feel free to remove those if you don't want/use them:
 # yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
