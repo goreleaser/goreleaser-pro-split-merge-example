@@ -18,6 +18,8 @@ jobs:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
       - name: ghcr-login
