@@ -2,6 +2,8 @@ name: goreleaser-nightly
 
 on:
   workflow_dispatch:
+  push:
+    tags: ['v*']
 
 permissions:
   contents: write
@@ -17,6 +19,13 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     steps:
+      - run: echo "event name is:" ${{ github.event_name }}
+      - run: echo "event type is:" ${{ github.event.action }}
+      # - id: flags
+      #   run: |
+      #     if '${{ github.event.action }}' = ""
+      #     echo "::set-output name=flags::--nightly"
+      # - run: echo "event type is:" ${{ }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
