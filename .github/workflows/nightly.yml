@@ -22,13 +22,10 @@ jobs:
       - shell: bash
         run: |
           if test '${{ github.event_name }}' = "workflow_dispatch"; then
-            echo "NIGHTLY!"
             echo "flags=--nightly" >> $GITHUB_ENV
           else
-            echo "tag!"
             echo "flags=" >> $GITHUB_ENV
           fi
-      - run: echo "flag is:" ${{ env.flags }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -52,7 +49,7 @@ jobs:
         with:
           path: dist/${{ matrix.GOOS }}
           key: ${{ matrix.GOOS }}-${{ env.sha_short }}
-      - run: curl -sfL https://goreleaser.com/static/run | VERSION=nightly DISTRIBUTION=pro bash -s -- release --rm-dist --split --nightly
+      - run: curl -sfL https://goreleaser.com/static/run | VERSION=nightly DISTRIBUTION=pro bash -s -- release --rm-dist --split ${{ env.flags }}
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
         env:
           GOOS: ${{ matrix.GOOS }}
