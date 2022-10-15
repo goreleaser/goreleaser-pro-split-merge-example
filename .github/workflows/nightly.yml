@@ -19,14 +19,16 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     steps:
-      - id: flags
+      - shell: bash
         run: |
-          if '${{ github.event_name }}' = "workflow_dispatch"; then
-            echo "::set-output name=flags::--nightly"
+          if test '${{ github.event_name }}' = "workflow_dispatch"; then
+            echo "NIGHTLY!"
+            echo "flags=--nightly" >> $GITHUB_ENV
           else
-            echo "::set-output name=flags::"
+            echo "tag!"
+            echo "flags=" >> $GITHUB_ENV
           fi
-      - run: echo "flag is:" ${{  steps.flags.outputs.flags }}
+      - run: echo "flag is:" ${{ env.flags }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -42,15 +44,14 @@ jobs:
         with:
           go-version: 1.19
           cache: true
-      - id: vars
-        shell: bash
+      - shell: bash
         run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - id: cache
         uses: actions/cache@v3
         with:
           path: dist/${{ matrix.GOOS }}
-          key: ${{ matrix.GOOS }}-${{ steps.vars.outputs.sha_short }}
+          key: ${{ matrix.GOOS }}-${{ env.sha_short }}
       - run: curl -sfL https://goreleaser.com/static/run | VERSION=nightly DISTRIBUTION=pro bash -s -- release --rm-dist --split --nightly
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
         env:
@@ -82,22 +83,21 @@ jobs:
           cache: true
 
       # copy the cashes from prepare
-      - id: vars
-        shell: bash
+      - shell: bash
         run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - uses: actions/cache@v3
         with:
           path: dist/linux
-          key: linux-${{ steps.vars.outputs.sha_short }}
+          key: linux-${{ env.sha_short }}
       - uses: actions/cache@v3
         with:
           path: dist/darwin
-          key: darwin-${{ steps.vars.outputs.sha_short }}
+          key: darwin-${{ env.sha_short }}
       - uses: actions/cache@v3
         with:
           path: dist/windows
-          key: windows-${{ steps.vars.outputs.sha_short }}
+          key: windows-${{ env.sha_short }}
 
 
       # release
