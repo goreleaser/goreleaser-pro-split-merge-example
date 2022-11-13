@@ -1,4 +1,4 @@
-# GoReleaser Pro Prebuilt Example
+# GoReleaser Pro Split & Merge Example
 
 This repo contains a quick and to-the-point example of how to use
 [GoReleaser Pro](https://goreleaser.com/pro)
