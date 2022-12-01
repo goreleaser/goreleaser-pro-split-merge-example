@@ -8,4 +8,4 @@ This also serves as a [nightly](https://goreleaser.com/customization/nightlies/)
 
 ---
 
-For now, this repo is not using the goreleaser action, as it does not work with nightlies (yet), but it will, soon enough.
+For more information, read [the blog post](https://carlosbecker.com/posts/goreleaser-split-merge/).
