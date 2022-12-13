@@ -49,7 +49,7 @@ jobs:
         with:
           path: dist/${{ matrix.GOOS }}
           key: ${{ matrix.GOOS }}-${{ env.sha_short }}
-      - uses: goreleaser/goreleaser-action@v3
+      - uses: goreleaser/goreleaser-action@v4
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
         with:
           distribution: goreleaser-pro
@@ -102,7 +102,7 @@ jobs:
 
 
       # release
-      - uses: goreleaser/goreleaser-action@v3
+      - uses: goreleaser/goreleaser-action@v4
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
         with:
           distribution: goreleaser-pro
