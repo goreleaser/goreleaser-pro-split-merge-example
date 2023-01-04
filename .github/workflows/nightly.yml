@@ -18,14 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
+      flags: ""
     steps:
-      - shell: bash
-        run: |
-          if test '${{ github.event_name }}' = "workflow_dispatch"; then
-            echo "flags=--nightly" >> $GITHUB_ENV
-          else
-            echo "flags=" >> $GITHUB_ENV
-          fi
+      - if: github.event_name == "workflow_dispatch"
+        run: echo "flags=--nightly" >> $GITHUB_ENV
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
