@@ -50,7 +50,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --rm-dist --split ${{ env.flags }}
+          args: release --clean --split ${{ env.flags }}
         env:
           GOOS: ${{ matrix.GOOS }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
